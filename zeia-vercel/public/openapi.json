@@ -1,0 +1,23 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "ZEIA REST API",
+    "version": "2.0.0",
+    "description": "REST API ZEIA untuk search YouTube Music, artist, album, lyrics, translation, transcription, audio extraction, dan proxy media."
+  },
+  "servers": [{ "url": "/" }],
+  "paths": {
+    "/api/search": { "get": { "summary": "Search songs, albums, playlists, artists", "parameters": [{"name":"query","in":"query","required":true,"schema":{"type":"string"}},{"name":"type","in":"query","schema":{"type":"string","default":"all"}}], "responses":{"200":{"description":"JSON result"}} }},
+    "/api/suggest": { "get": { "summary": "YouTube search suggestions", "parameters": [{"name":"q","in":"query","required":true,"schema":{"type":"string"}}], "responses":{"200":{"description":"JSON array"}} }},
+    "/api/artist": { "get": { "summary": "Get artist details", "parameters": [{"name":"id","in":"query","required":true,"schema":{"type":"string"}}], "responses":{"200":{"description":"JSON result"}} }},
+    "/api/album": { "get": { "summary": "Get album or playlist details", "parameters": [{"name":"id","in":"query","required":true,"schema":{"type":"string"}}], "responses":{"200":{"description":"JSON result"}} }},
+    "/api/lyrics": { "get": { "summary": "Get lyrics using the primary lyrics pipeline", "parameters": [{"name":"id","in":"query","required":true,"schema":{"type":"string"}},{"name":"title","in":"query","schema":{"type":"string"}},{"name":"artist","in":"query","schema":{"type":"string"}}], "responses":{"200":{"description":"JSON result"}} }},
+    "/api/lyrics1": { "get": { "summary": "Get lyrics from the LRCLIB pipeline", "parameters": [{"name":"id","in":"query","required":true,"schema":{"type":"string"}},{"name":"title","in":"query","schema":{"type":"string"}},{"name":"artist","in":"query","schema":{"type":"string"}}], "responses":{"200":{"description":"JSON result"}} }},
+    "/api/lyrics2": { "get": { "summary": "Get lyrics from transcription pipeline", "parameters": [{"name":"id","in":"query","required":true,"schema":{"type":"string"}}], "responses":{"200":{"description":"JSON result"}} }},
+    "/api/ytplay": { "post": { "summary": "Extract an audio download URL", "requestBody":{"required":true,"content":{"application/json":{"schema":{"type":"object","required":["query"],"properties":{"query":{"type":"string"},"url":{"type":"string"}}}}}}, "parameters":[{"name":"debug","in":"query","schema":{"type":"string","enum":["0","1"]}}], "responses":{"200":{"description":"JSON result"},"503":{"description":"All media extraction providers failed"}} }},
+    "/api/transcribe": { "post": { "summary": "Transcribe a YouTube audio source", "requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"url":{"type":"string"},"id":{"type":"string"}}}}}}, "responses":{"200":{"description":"JSON result"}} }, "get": { "summary":"Transcribe by URL or video id", "parameters":[{"name":"url","in":"query","schema":{"type":"string"}},{"name":"id","in":"query","schema":{"type":"string"}}], "responses":{"200":{"description":"JSON result"}} }},
+    "/api/translate": { "post": { "summary": "Translate text or an array of lyric lines", "parameters":[{"name":"tl","in":"query","schema":{"type":"string","default":"id"}}], "requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"text":{"type":"string"},"q":{"type":"string"},"targetLang":{"type":"string"},"lines":{"type":"array","items":{"oneOf":[{"type":"string"},{"type":"object"}]}}}}}}}, "responses":{"200":{"description":"JSON result"}} }, "get": { "summary":"Translate text using query parameters", "parameters":[{"name":"text","in":"query","schema":{"type":"string"}},{"name":"q","in":"query","schema":{"type":"string"}},{"name":"tl","in":"query","schema":{"type":"string","default":"id"}}], "responses":{"200":{"description":"JSON result"}} }},
+    "/api/proxy-audio": { "get": { "summary":"HTTP audio proxy with Range/206 support", "parameters":[{"name":"url","in":"query","required":true,"schema":{"type":"string","format":"uri"}}], "responses":{"200":{"description":"Audio stream"},"206":{"description":"Partial audio stream"}} }},
+    "/api/proxy-image": { "get": { "summary":"Image proxy", "parameters":[{"name":"url","in":"query","required":true,"schema":{"type":"string","format":"uri"}}], "responses":{"200":{"description":"Image stream"}} }}
+  }
+}
